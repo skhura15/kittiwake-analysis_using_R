@@ -1,0 +1,425 @@
+---
+title: "Kittiwake Population"
+output: html_document
+date: "2023-11-30"
+---
+
+```{r}
+getwd()
+```
+
+
+
+```{r}
+library(readr)
+df=read_csv("/Users/saanidhya/Downloads/R Studio/final_coursework/Kittiwake_Observation_20558404.csv")
+View(df)
+```
+```{r}
+# function to caculate mode
+calculate_mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+# Dusk
+dusk_mean <- mean(df$dusk)
+dusk_median <- median(df$dusk)
+dusk_mode <- calculate_mode(df$dusk)
+dusk_variance <- var(df$dusk)
+dusk_std <- sd(df$dusk)
+
+# Noon 
+noon_mean <- mean(df$noon)
+noon_median <- median(df$noon)
+noon_mode <- calculate_mode(df$noon)
+noon_variance <- var(df$noon)
+noon_std <- sd(df$noon)
+
+# Mid Afternoon
+mid_afternoon_mean <- mean(df$`mid-afternoon`)
+mid_afternoon_median <- median(df$`mid-afternoon`)
+mid_afternoon_mode <- calculate_mode(df$`mid-afternoon`)
+mid_afternoon_variance <- var(df$`mid-afternoon`)
+mid_afternoon_std <- sd(df$`mid-afternoon`)
+
+# Dawn
+dawn_mean <- mean(df$dawn)
+dawn_median <- median(df$dawn)
+dawn_mode <- calculate_mode(df$dawn)
+dawn_variance <- var(df$dawn)
+dawn_std <- sd(df$dawn)
+
+result_table <- data.frame(
+  TimeOfDay = c("dusk", "noon", "mid_afternoon", "dawn"),
+  Mean = c(dusk_mean, noon_mean, mid_afternoon_mean, dawn_mean),
+  Median = c(dusk_median, noon_median, mid_afternoon_median, dawn_median),
+  Mode = c(dusk_mode, noon_mode, mid_afternoon_mode, dawn_mode),
+  Variance = c(dusk_variance, noon_variance, mid_afternoon_variance, dawn_variance),
+  SD = c(dusk_std, noon_std, mid_afternoon_std, dawn_std)
+)
+
+# Print the result table
+print(result_table)
+```
+
+```{r}
+boxplot(df, names = c("dusk", "noon","mid-afternoon","dawn"), ylab = "observations")
+```
+```{r}
+summary(df)
+```
+
+```{r}
+library(ggplot2)
+ggplot(data = df, aes(x = dawn, y = dawn)) +
+  geom_point(aes(shape = "Dawn", color = "Dawn"), size = 3) +
+  geom_point(aes(x = noon, y = dawn, shape = "Noon", color = "Noon"), size = 3) +
+  geom_point(aes(x = `mid-afternoon`, y = dawn, shape = "Mid-Afternoon", color = "Mid-Afternoon"), size = 3) +
+  geom_point(aes(x = dusk, y = dawn, shape = "Dusk", color = "Dusk"), size = 3) +
+  scale_shape_manual(values = c("Dawn" = 16, "Noon" = 15, "Mid-Afternoon" = 16, "Dusk" = 2)) +
+  scale_color_manual(values = c("Dawn" = "green", "Noon" = "blue", "Mid-Afternoon" = "orange", "Dusk" = "red")) +
+  labs(x = "Time of Day", y = "Dawn") +
+  theme_minimal()
+```
+```{r}
+
+library(ggplot2)
+
+
+data <- df$noon
+
+# Create a histogram with density curve
+hist_plot <- ggplot(data = data.frame(x = data), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 5, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(fill = "red", alpha = 0.2) +
+  labs(title = "Noon Observations", x = "Values", y = "Density")
+
+
+print(hist_plot)
+
+
+# For Dawn
+data_dawn <- df$dawn
+hist_plot_dawn <- ggplot(data = data.frame(x = data_dawn), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 5, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(fill = "red", alpha = 0.2) +
+  labs(title = "Dawn Observations", x = "Values", y = "Density")
+print(hist_plot_dawn)
+
+# For Mid-Afternoon
+data_mid_afternoon <- df$`mid-afternoon`
+hist_plot_mid_afternoon <- ggplot(data = data.frame(x = data_mid_afternoon), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 5, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(fill = "red", alpha = 0.2) +
+  labs(title = " Mid-Afternoon Observations", x = "Values", y = "Density")
+print(hist_plot_mid_afternoon)
+
+# For Dusk
+data_dusk <- df$dusk
+hist_plot_dusk <- ggplot(data = data.frame(x = data_dusk), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 5, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(fill = "red", alpha = 0.2) +
+  labs(title = " Dusk Observations", x = "Values", y = "Density")
+print(hist_plot_dusk)
+```
+```{r}
+#calculate confidence interval 
+#noon_data <- df$noon
+
+
+
+n = length(data)
+
+# Confidence level
+confidence_level = 0.90
+
+# dof
+dof = n - 1
+
+# standard error of the mean
+standard_error = noon_std / sqrt(n)
+margin_of_error = qt((1 + confidence_level) / 2, dof) * standard_error
+
+# confidence interval
+confidence_interval = c(noon_mean - margin_of_error, noon_mean + margin_of_error)
+
+#results
+cat("Mean Noon Observations:", noon_mean, "\n")
+cat("Standard Deviation:", noon_std, "\n")
+cat("Standard Error of the Mean:", standard_error, "\n")
+cat("Degrees of Freedom:", dof, "\n")
+cat(paste(confidence_level * 100, "% Confidence Interval for Mean Noon Observations: [", 
+          round(confidence_interval[1], 2), ",", round(confidence_interval[2], 2), "]\n"))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+df1=read_csv("/Users/saanidhya/Downloads/R Studio/final_coursework/Kittiwake_Historical_20558404.csv")
+View(df1)
+```
+```{r}
+#change the name of 1st column to year 
+colnames(df1)[colnames(df1) == "...1"] = "year"
+
+```
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+
+# Reshape the data for ggplot
+long_data <- df1 %>% gather(key = "Site", value = "Number", -year)
+
+# Plot the data using ggplot2
+ggplot(long_data, aes(x = year, y = Number, color = Site)) +
+  geom_line() +
+  labs(title = "Kittiwake Numbers Over Time",
+       x = "Year", y = "Number of Kittiwakes")
+```
+```{r}
+
+#2a
+# paired T-test 
+t_test_AB <- t.test(df1$`Site A`, df1$`Site B`)$p.value
+t_test_AC <- t.test(df1$`Site A`, df1$`Site C`)$p.value
+t_test_AD <- t.test(df1$`Site A`, df1$`Site D`)$p.value
+t_test_BC <- t.test(df1$`Site B`, df1$`Site C`)$p.value
+t_test_BD <- t.test(df1$`Site B`, df1$`Site D`)$p.value
+t_test_CD <- t.test(df1$`Site C`, df1$`Site D`)$p.value
+
+# Collect all the p-values
+p_values <- c(t_test_AB, t_test_AC, t_test_AD, t_test_BC, t_test_BD, t_test_CD)
+
+# Apply Bonferroni correction
+adjusted_p_values <- p.adjust(p_values, method = "bonferroni")
+
+# Output the adjusted p-values
+adjusted_p_values
+
+```
+
+
+```{r}
+#2b
+year <- c(2012, 2016)
+breeding_pairs <- c(48, 42) 
+
+# Interpolating for 2014
+estimated_pairs_2014 <- approx(x = year, y = breeding_pairs, xout = 2014)$y
+
+# Estimated number of breeding pairs
+cat("Estimated Breeding Pairs at Site A in 2014:", estimated_pairs_2014, "\n")
+```
+
+```{r}
+#question 3 
+
+df2=read_csv("/Users/saanidhya/Downloads/R Studio/final_coursework/Kittiwake_Measurement_20558404.csv")
+view(df2)
+```
+
+```{r}
+calculate_mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+# Weight
+weight_mean <- mean(df2$Weight)
+weight_median <- median(df2$Weight)
+weight_mode <- calculate_mode(df2$Weight)
+weight_min <- min(df2$Weight)
+weight_max <- max(df2$Weight)
+weight_variance <- var(df2$Weight)
+weight_std <- sd(df2$Weight)
+
+# Wingspan
+wingspan_mean <- mean(df2$Wingspan)
+wingspan_median <- median(df2$Wingspan)
+wingspan_mode <- calculate_mode(df2$Wingspan)
+wingspan_min <- min(df2$Wingspan)
+wingspan_max <- max(df2$Wingspan)
+wingspan_variance <- var(df2$Wingspan)
+wingspan_std <- sd(df2$Wingspan)
+
+# Culmen
+culmen_mean <- mean(df2$Culmen)
+culmen_median <- median(df2$Culmen)
+culmen_mode <- calculate_mode(df2$Culmen)
+culmen_min <- min(df2$Culmen)
+culmen_max <- max(df2$Culmen)
+culmen_variance <- var(df2$Culmen)
+culmen_std <- sd(df2$Culmen)
+
+# Creating a result table
+result_table <- data.frame(
+  Measurement = c("Weight", "Wingspan", "Culmen"),
+  Mean = c(weight_mean, wingspan_mean, culmen_mean),
+  Median = c(weight_median, wingspan_median, culmen_median),
+  Mode = c(weight_mode, wingspan_mode, culmen_mode),
+  Min = c(weight_min, wingspan_min, culmen_min),
+  Max = c(weight_max, wingspan_max, culmen_max),
+  Variance = c(weight_variance, wingspan_variance, culmen_variance),
+  SD = c(weight_std, wingspan_std, culmen_std)
+)
+
+# Print the result table
+print(result_table)
+```
+
+```{r}
+boxplot(df2$Weight, df2$Wingspan, df2$Culmen, names = c("Weight", "Wingspan", "Culmen"), ylab = "Values")
+#summary(df2)
+
+# f-test for 3c (weight).
+var1 <- var(df2$Weight[df2$`Sub-species` == "Black-legged"])
+var2 <- var(df2$Weight[df2$`Sub-species` == "Red-legged"])
+f.test <- var.test(df2$Weight ~ df2$`Sub-species`, data = df2)
+print(f.test)
+```
+```{r}
+# Histogram for Weight
+hist_weight <- ggplot(data = data.frame(x = df2$Weight), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 5, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(fill = "red", alpha = 0.2) +
+  labs(title = "Histogram with Density Curve for Weight", x = "Weight", y = "Density")
+
+# Histogram for Wingspan
+hist_wingspan <- ggplot(data = data.frame(x = df2$Wingspan), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 5, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(fill = "red", alpha = 0.2) +
+  labs(title = "Histogram with Density Curve for Wingspan", x = "Wingspan", y = "Density")
+
+# Histogram for Culmen
+hist_culmen <- ggplot(data = data.frame(x = df2$Culmen), aes(x = x)) +
+  geom_histogram(aes(y = after_stat(density)), binwidth = 1, fill = "lightblue", color = "black", alpha = 0.7) +
+  geom_density(fill = "red", alpha = 0.2) +
+  labs(title = "Histogram with Density Curve for Culmen", x = "Culmen", y = "Density")
+
+# Print the plots
+print(hist_weight)
+print(hist_wingspan)
+print(hist_culmen)
+```
+```{r}
+# Create scatterplots
+par(mfrow=c(1,2))
+
+# Scatter plot for Weight vs. Wingspan
+plot(df2$Weight[df2$`Sub-species` == "Black-legged"], df2$Wingspan[df2$`Sub-species` == "Black-legged"], 
+     pch = 19, col = "blue", xlab = "Weight", ylab = "Wingspan", main = "Weight vs. Wingspan (Black-legged)")
+points(df2$Weight[df2$`Sub-species` == "Red-legged"], df2$Wingspan[df2$`Sub-species` == "Red-legged"], 
+       pch = 19, col = "red")
+
+# Scatter plot for Weight vs. Culmen
+plot(df2$Weight[df2$`Sub-species` == "Black-legged"], df2$Culmen[df2$`Sub-species` == "Black-legged"], 
+     pch = 19, col = "blue", xlab = "Weight", ylab = "Culmen", main = "Weight vs. Culmen (Black-legged)")
+points(df2$Weight[df2$`Sub-species` == "Red-legged"], df2$Culmen[df2$`Sub-species` == "Red-legged"], 
+       pch = 19, col = "red")
+```
+
+
+```{r}
+# b) Independence of Wing Span and Culmen Length
+# Correlation test for each sub-species
+cor.test(df2$Wingspan[df2$`Sub-species` == "Black-legged"], df2$Culmen[df2$`Sub-species` == "Black-legged"])
+cor.test(df2$Wingspan[df2$`Sub-species` == "Red-legged"], df2$Culmen[df2$`Sub-species` == "Red-legged"])
+```
+
+
+
+```{r}
+#t-test (2c)
+t.test(Weight ~ `Sub-species`, data = df2, var.equal = TRUE)
+```
+```{r}
+#difference between the 2 sub species (3d)
+#create subsets for T-test
+black_legged <- subset(df2, `Sub-species` == "Black-legged")
+red_legged <- subset(df2, `Sub-species` == "Red-legged")
+ 
+# t-tests
+weight_t_test <- t.test(black_legged$Weight, red_legged$Weight)$p.value
+wingspan_t_test <- t.test(black_legged$Wingspan, red_legged$Wingspan)$p.value
+culmen_t_test <- t.test(black_legged$Culmen, red_legged$Culmen)$p.value
+p_values <- c(weight_t_test, wingspan_t_test, culmen_t_test)
+ 
+# Bonferroni correction 
+p_values <- p.adjust(p_values, method = "bonferroni")
+ 
+names(p_values) <- c("Weight", "Wingspan", "Culmen")
+print(p_values)
+```
+
+```{r}
+#question 4
+df3=read_csv("/Users/saanidhya/Downloads/R Studio/final_coursework/Kittiwake_Location_20558404.csv")
+view(df3)
+```
+
+```{r}
+# coast direction is a categorical variable 
+df3$Coast.direction <- as.factor(df3$Coast.direction)
+```
+```{r}
+# Fit a linear model (4a)
+lm_fit <- lm(Breeding.pairs ~ Coast.direction + sandeel + Summer.temp + cliff.height, data = df3)
+
+# View the summary 
+summary(lm_fit)
+aic_lm = AIC(lm_fit)
+```
+
+
+
+```{r}
+# convert to log
+df3$log_Breeding_pairs <- log(df3$Breeding.pairs)
+
+# Fit a linear model using the log-transformed number of breeding pairs (4b)
+lm_log_fit <- lm(log_Breeding_pairs ~ Coast.direction + sandeel + Summer.temp + cliff.height, data = df3)
+aic_log_lm = AIC(lm_log_fit)
+
+```
+
+
+```{r}
+summary(lm_log_fit)
+
+```
+```{r}
+# Print The AIC for both models
+print(aic_log_lm)
+print(aic_lm)
+
+#aic log_lm has a better fit
+```
+
+```{r}
+df4 <- data.frame(
+  Coast.direction = factor("West", levels = levels(df3$Coast.direction)),
+  sandeel = 2.41,
+  Summer.temp = 25.1,
+  cliff.height = 3.12
+)
+
+# Making predictions
+predicted_log_values <- predict(lm_log_fit, newdata = df4, interval = "confidence", level = 0.98)
+
+# transform predictions from log scale to original scale
+predicted_values <- exp(predicted_log_values)
+
+# Predicted values and confidence interval(4e)
+print(predicted_values)
+```
+
