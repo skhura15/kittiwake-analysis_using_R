@@ -21,7 +21,6 @@ Repository Contents
 
 Requirements
 	•	R 4.0 or later
-	•	R packages: ggplot2, dplyr, readr, and others listed in the R Markdown file.
 
 Methodology
 The project employs statistical techniques including:
@@ -29,3 +28,7 @@ The project employs statistical techniques including:
 	•	Paired T-tests
 	•	Linear regression with log-transformation
 	•	Correlation analysis
+
+ Author
+        •	Saanidhya Khurana
+        •       https://www.linkedin.com/in/saanidhya-khurana-56ab8a200/     
